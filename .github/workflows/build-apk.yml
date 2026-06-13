@@ -3,21 +3,31 @@ name: Mobile Cloud Compile Production APK
 on:
   push:
     branches: [ "main", "master" ]
-  workflow_dispatch: # Allows you to manually trigger the build from your phone
+  workflow_dispatch: 
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Download your files from GitHub
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
+      # Step 2: Initialize Java JDK
       - name: Initialize Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
+      # Step 3: Install the Flutter environment so the cloud understands "flutter" commands
+      - name: Install Flutter Framework
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.x'
+          channel: 'stable'
+
+      # Step 4: Scaffold the project structure and build the APK
       - name: Auto-Generate Full Flutter Scaffolding
         run: |
           cd ..
@@ -30,6 +40,7 @@ jobs:
           flutter build apk --release
           cp build/app/outputs/flutter-apk/app-release.apk ../technomak-hse-app/
 
+      # Step 5: Deliver the working file straight to your phone
       - name: Upload Compiled APK to Mobile Device
         uses: actions/upload-artifact@v4
         with:
