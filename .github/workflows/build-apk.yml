@@ -26,17 +26,12 @@ jobs:
 
       - name: Auto-Generate Full Flutter Scaffolding
         run: |
-          # Find the exact absolute paths of main.dart and pubspec.yaml anywhere in the workspace
           MAIN_PATH=$(find $GITHUB_WORKSPACE -name "main.dart" | head -n 1)
           PUB_PATH=$(find $GITHUB_WORKSPACE -name "pubspec.yaml" | head -n 1)
-          
-          echo "Found main.dart at: $MAIN_PATH"
-          echo "Found pubspec.yaml at: $PUB_PATH"
           
           cd ..
           flutter create --org com.technomak.hse --project-name=technomak_hse_app app_factory
           
-          # Copy the dynamically located files into our app factory
           cp "$MAIN_PATH" app_factory/lib/main.dart
           cp "$PUB_PATH" app_factory/pubspec.yaml
           
@@ -48,11 +43,5 @@ jobs:
       - name: Upload Compiled APK to Mobile Device
         uses: actions/upload-artifact@v4
         with:
-          name: technomak-hse-mobile-apk
-          path: app-release.apk
-
-      - name: Upload Compiled APK to Mobile Device
-        uses: actions/upload-artifact@v4
-        with:
-          name: technomak-hse-mobile-apk
+          name: technomak-hse-v1-${{ github.run_number }}
           path: app-release.apk
