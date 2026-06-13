@@ -9,38 +9,32 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Download your files from GitHub
       - name: Checkout Source Code
         uses: actions/checkout@v4
 
-      # Step 2: Initialize Java JDK
       - name: Initialize Java JDK
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
           java-version: '17'
 
-      # Step 3: Install the Flutter environment so the cloud understands "flutter" commands
       - name: Install Flutter Framework
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.x'
           channel: 'stable'
 
-      # Step 4: Scaffold the project structure and build the APK
       - name: Auto-Generate Full Flutter Scaffolding
         run: |
           cd ..
           flutter create --org com.technomak.hse --project-name=technomak_hse_app app_factory
-          cp -r technomak-hse-app/.github app_factory/
-          cp technomak-hse-app/main.dart app_factory/lib/main.dart
-          cp technomak-hse-app/pubspec.yaml app_factory/pubspec.yaml
+          cp ${{ github.workspace }}/main.dart app_factory/lib/main.dart
+          cp ${{ github.workspace }}/pubspec.yaml app_factory/pubspec.yaml
           cd app_factory
           flutter pub get
           flutter build apk --release
-          cp build/app/outputs/flutter-apk/app-release.apk ../technomak-hse-app/
+          cp build/app/outputs/flutter-apk/app-release.apk ${{ github.workspace }}/
 
-      # Step 5: Deliver the working file straight to your phone
       - name: Upload Compiled APK to Mobile Device
         uses: actions/upload-artifact@v4
         with:
