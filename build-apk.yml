@@ -1,0 +1,47 @@
+name: Compile Android Production APK
+
+# This triggers the build process every time you push code to the master/main branch
+on:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  build:
+    name: Build Flutter APK on Cloud Virtual Runner
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Clone the GitHub repository code into the virtual machine
+      - name: Checkout Repository Source Code
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Java Environment required for Android systems
+      - name: Initialize Java Development Kit (JDK 17)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      # Step 3: Install and cache the Flutter SDK setup
+      - name: Install Flutter Framework
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.x' # Uses a highly stable version compatible with standard packages
+          channel: 'stable'
+
+      # Step 4: Download dependencies specified in your pubspec.yaml file
+      - name: Fetch App Dependencies
+        run: flutter pub get
+
+      # Step 5: Compile the app into a split-per-ABI or universal production APK
+      - name: Compile Release APK Document
+        run: flutter build apk --release
+
+      # Step 6: Extract the generated APK file from the runner and post it as a downloadable artifact
+      - name: Upload Finished APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: technomak-hse-production-apk
+          path: build/app/outputs/flutter-apk/app-release.apk
