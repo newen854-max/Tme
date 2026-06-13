@@ -1,17 +1,37 @@
-name: technomak_hse_app
-description: "Technomak HSE App"
-publish_to: 'none'
-version: 1.0.0+1
+name: Mobile Cloud Compile Production APK
 
-environment:
-  sdk: '>=3.2.0 <4.0.0'
+on:
+  push:
+    branches: [ "main", "master" ]
+  workflow_dispatch: # Allows you to manually trigger the build from your phone
 
-dependencies:
-  flutter:
-    sdk: flutter
-  fl_chart: ^0.66.0
-  file_picker: ^8.0.0
-  signature: ^5.4.0
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
 
-flutter:
-  uses-material-design: true
+      - name: Initialize Java JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Auto-Generate Full Flutter Scaffolding
+        run: |
+          cd ..
+          flutter create --org com.technomak.hse --project-name=technomak_hse_app app_factory
+          cp -r technomak-hse-app/.github app_factory/
+          cp technomak-hse-app/main.dart app_factory/lib/main.dart
+          cp technomak-hse-app/pubspec.yaml app_factory/pubspec.yaml
+          cd app_factory
+          flutter pub get
+          flutter build apk --release
+          cp build/app/outputs/flutter-apk/app-release.apk ../technomak-hse-app/
+
+      - name: Upload Compiled APK to Mobile Device
+        uses: actions/upload-artifact@v4
+        with:
+          name: technomak-hse-mobile-apk
+          path: app-release.apk
