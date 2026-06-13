@@ -252,7 +252,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: DataTable(
-              headingRowColor: WidgetStateProperty.all(Colors.grey[200]),
+              headingRowColor: MaterialStateProperty.all(Colors.grey[200]),
               columns: const [
                 DataColumn(label: Text('S.No')),
                 DataColumn(label: Text('Incident Number')),
