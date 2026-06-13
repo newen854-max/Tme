@@ -1,0 +1,17 @@
+name: technomak_hse_app
+description: "Technomak HSE Incident Investigation App"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  fl_chart: ^0.66.0
+  file_picker: ^8.0.0
+  signature: ^5.4.0
+
+flutter:
+  uses-material-design: true
