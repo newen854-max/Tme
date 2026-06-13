@@ -8,7 +8,7 @@ void main() {
 }
 
 class TechnomakHseApp extends StatelessWidget {
-  const TechnomakHseApp({Key? key}) : constructor(key: key);
+  const TechnomakHseApp({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +16,6 @@ class TechnomakHseApp extends StatelessWidget {
       title: 'Technomak HSE Incident Management',
       theme: ThemeData(
         primarySwatch: Colors.red,
-        primaryColor: const Color(0xFFC62828), // Professional Industrial Red
         scaffoldBackgroundColor: Colors.grey[50],
         inputDecorationTheme: const InputDecorationTheme(
           border: OutlineInputBorder(),
@@ -30,7 +29,6 @@ class TechnomakHseApp extends StatelessWidget {
   }
 }
 
-// Global Model for Incident Tracking
 class IncidentActionItem {
   final int sNo;
   final String incidentNumber;
@@ -38,7 +36,7 @@ class IncidentActionItem {
   final String correctiveAction;
   final String targetDate;
   final String responsiblePerson;
-  final String status; // Pending, Overdue, Completed
+  final String status;
 
   IncidentActionItem({
     required this.sNo,
@@ -61,7 +59,6 @@ class MainNavigationScreen extends StatefulWidget {
 class _MainNavigationScreenState extends State<MainNavigationScreen> with SingleTickerProviderStateMixin {
   late TabController _tabController;
 
-  // Mock Data for Register and Dashboard Analysis
   final List<IncidentActionItem> _mockRegister = [
     IncidentActionItem(
       sNo: 1,
@@ -85,14 +82,13 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
       sNo: 3,
       incidentNumber: "TMAK-2026-003",
       rootCause: "12. Lack of or poor housekeeping",
-      correctiveAction: "Clear workspace debris from main scaffolding zone access walkways.",
+      correctiveAction: "Clear workspace debris from main scaffolding zone walkways.",
       targetDate: "2026-05-14",
       responsiblePerson: "Rasool Ghulam",
       status: "Completed",
     ),
   ];
 
-  // Form Field State Controllers & Variables
   final _incidentNumCtrl = TextEditingController(text: "TMAK-2026-004");
   final _reportDateCtrl = TextEditingController(text: "2026-06-14");
   final _detailsCtrl = TextEditingController();
@@ -100,30 +96,22 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
   final _recoveryCtrl = TextEditingController();
   final _learningPointCtrl = TextEditingController();
 
-  // Appendix F Selections
   String? _selectedDirectCause;
   String? _selectedRootCause;
   String? _selectedBodyPart;
   String? _selectedNatureInjury;
   String? _selectedTypeIncident;
 
-  String _otherBodyPart = "";
-  String _otherNatureInjury = "";
-  String _otherTypeIncident = "";
-
   bool _revisionRequired = false;
 
-  // File Name Trackers
   String _logoName = "Not Uploaded (Using Default)";
   String _attachmentName = "No files attached";
   String _witnessStatementName = "No files uploaded";
 
-  // Signature Controllers
   final SignatureController _supervisorSig = SignatureController(penStrokeWidth: 3, penColor: Colors.black);
   final SignatureController _managerSig = SignatureController(penStrokeWidth: 3, penColor: Colors.black);
   final SignatureController _hseTeamSig = SignatureController(penStrokeWidth: 3, penColor: Colors.black);
 
-  // Lists for Appendix F Menus
   final List<String> _causes1to32 = List.generate(32, (index) {
     const labels = [
       "Lack of communication – info error/omission", "Failure to follow rules/procedures",
@@ -153,7 +141,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
     super.dispose();
   }
 
-  // File Picker Helpers
   Future<void> _pickFile(String type) async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
     if (result != null) {
@@ -169,30 +156,19 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.all(4),
-              color: Colors.white,
-              child: const Icon(Icons.gavel, color: Color(0xFFC62828)),
-            ),
-            const SizedBox(width: 10),
-            const Text("TECHNOMAK HSE SYSTEM", style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2)),
-          ],
-        ),
+        title: const Text("TECHNOMAK HSE SYSTEM", style: TextStyle(fontWeight: FontWeight.bold)),
         backgroundColor: const Color(0xFFC62828),
         bottom: TabBar(
           controller: _tabController,
           isScrollable: true,
-          indicatorColor: Colors.white,
           tabs: const [
-            Tab(icon: Icon(Icons.dashboard), text: "Home Dashboard"),
-            Tab(icon: Icon(Icons.assignment), text: "Incident Register"),
-            Tab(icon: Icon(Icons.info), text: "1. Info & Details"),
-            Tab(icon: Icon(Icons.analytics), text: "2. Appendix F Analysis"),
-            Tab(icon: Icon(Icons.build), text: "3. Corrective Actions"),
-            Tab(icon: Icon(Icons.verified_user), text: "4. Approvals"),
-            Tab(icon: Icon(Icons.cloud_upload), text: "5. Upload Media"),
+            Tab(text: "Home Dashboard"),
+            Tab(text: "Incident Register"),
+            Tab(text: "1. Info & Details"),
+            Tab(text: "2. Appendix F Analysis"),
+            Tab(text: "3. Corrective Actions"),
+            Tab(text: "4. Approvals"),
+            Tab(text: "5. Upload Media"),
           ],
         ),
       ),
@@ -208,11 +184,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
           _buildUploadMediaTab(),
         ],
       ),
-      bottomNavigationBar: _buildDocumentControlFooter(),
     );
   }
 
-  // --- TAB 1: HOME DASHBOARD ---
   Widget _buildDashboardTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -230,7 +204,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
           ),
           const SizedBox(height: 24),
           const Text("Incident Root Cause Contribution Matrix", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
           SizedBox(
             height: 200,
             child: BarChart(
@@ -245,8 +219,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
               ),
             ),
           ),
-          const SizedBox(height: 12),
-          const Center(child: Text("X-Axis: Appendix F Item References (Items #2, #5, #12)", style: TextStyle(fontSize: 12, color: Colors.grey))),
         ],
       ),
     );
@@ -270,7 +242,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
     );
   }
 
-  // --- TAB 2: INTERACTIVE DATA REGISTER ---
   Widget _buildRegisterTab() {
     return Padding(
       padding: const EdgeInsets.all(12),
@@ -281,15 +252,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
           child: SingleChildScrollView(
             scrollDirection: Axis.vertical,
             child: DataTable(
-              headingRowColor: MaterialStateProperty.all(Colors.grey[200]),
+              headingRowColor: WidgetStateProperty.all(Colors.grey[200]),
               columns: const [
-                DataColumn(label: Text('S.No', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Incident Number', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Root Cause Description', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Corrective Action Matrix', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Target Date', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Responsible Person', style: TextStyle(fontWeight: FontWeight.bold))),
-                DataColumn(label: Text('Status Block', style: TextStyle(fontWeight: FontWeight.bold))),
+                DataColumn(label: Text('S.No')),
+                DataColumn(label: Text('Incident Number')),
+                DataColumn(label: Text('Root Cause Description')),
+                DataColumn(label: Text('Corrective Action Matrix')),
+                DataColumn(label: Text('Target Date')),
+                DataColumn(label: Text('Responsible Person')),
+                DataColumn(label: Text('Status Block')),
               ],
               rows: _mockRegister.map((item) {
                 Color statusColor = Colors.green;
@@ -297,7 +268,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
                 if (item.status == "Pending") statusColor = Colors.orange;
 
                 return DataRow(
-                  backgroundColor: item.status == "Overdue" ? MaterialStateProperty.all(Colors.red.withOpacity(0.08)) : null,
                   cells: [
                     DataCell(Text(item.sNo.toString())),
                     DataCell(Text(item.incidentNumber)),
@@ -306,7 +276,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
                     DataCell(Text(item.targetDate)),
                     DataCell(Text(item.responsiblePerson)),
                     DataCell(Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 10, py: 4),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                       decoration: BoxDecoration(color: statusColor, borderRadius: BorderRadius.circular(4)),
                       child: Text(item.status, style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold, fontSize: 12)),
                     )),
@@ -320,7 +290,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
     );
   }
 
-  // --- TAB 3: WIZARD STEP 1 - INFO & DETAILS ---
   Widget _buildInfoDetailsTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -337,17 +306,16 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
           ),
           const SizedBox(height: 20),
           _buildSectionHeader("INCIDENT CHRONOLOGY & TIMELINE"),
-          TextFormField(controller: _detailsCtrl, maxLines: 4, decoration: const InputDecoration(labelText: "Details of Incident *", hintText: "Provide chronological workflow series detailing operational disruption")),
+          TextFormField(controller: _detailsCtrl, maxLines: 4, decoration: const InputDecoration(labelText: "Details of Incident *")),
           const SizedBox(height: 16),
-          TextFormField(controller: _additionalInfoCtrl, maxLines: 3, decoration: const InputDecoration(labelText: "Other/Additional Information", hintText: "Weather parameters, Training protocols undergone, TBT system logs, etc.")),
+          TextFormField(controller: _additionalInfoCtrl, maxLines: 3, decoration: const InputDecoration(labelText: "Other/Additional Information")),
           const SizedBox(height: 16),
-          TextFormField(controller: _recoveryCtrl, maxLines: 3, decoration: const InputDecoration(labelText: "Immediate Recovery Measure Applied *", hintText: "Immediate structural triage mitigation details")),
+          TextFormField(controller: _recoveryCtrl, maxLines: 3, decoration: const InputDecoration(labelText: "Immediate Recovery Measure Applied *")),
         ],
       ),
     );
   }
 
-  // --- TAB 4: WIZARD STEP 2 - APPENDIX F ANALYSIS ---
   Widget _buildAppendixFTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -355,52 +323,28 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionHeader("APPENDIX F - INCIDENT INVESTIGATION REPORT GUIDELINES"),
-          
           _buildDropdownField("Direct Cause of the Incident *", _selectedDirectCause, _causes1to32, (val) => setState(() => _selectedDirectCause = val)),
           const SizedBox(height: 16),
           _buildDropdownField("Root Cause of the Incident *", _selectedRootCause, _causes1to32, (val) => setState(() => _selectedRootCause = val)),
-          
           const SizedBox(height: 20),
           _buildSectionHeader("BIOMETRIC INJURY CLASSIFICATION PROFILE"),
-          
           _buildDropdownField("Body Part Injured *", _selectedBodyPart, [
-            "1. Foot / Toe / Ankle / Knee (Left / Right)", "2. Eye (Left / Right)", "3. Back", 
-            "4. Hand / Finger (Left / Right)", "5. Hand/Arm / Shoulder (Left / Right)", 
-            "6. Body / Trunk", "7. Face", "8. Head", "9. Abdomen", "10. Others (Specify)"
+            "1. Foot / Toe / Ankle / Knee", "2. Eye (Left / Right)", "3. Back", 
+            "4. Hand / Finger", "5. Hand/Arm / Shoulder", "6. Body / Trunk", "7. Face", "8. Head", "9. Abdomen", "10. Others"
           ], (val) => setState(() => _selectedBodyPart = val)),
-          if (_selectedBodyPart?.contains("10. Others") ?? false) ...[
-            const SizedBox(height: 8),
-            TextFormField(onChanged: (val) => _otherBodyPart = val, decoration: const InputDecoration(labelText: "Specify Body Part Parameters")),
-          ],
-
           const SizedBox(height: 16),
-          _buildDropdownField("Nature of Injury *", [
-            "1. Fracture", "2. Bruise / laceration /abrasion /puncture/ contusion", "3. Burn / Scald",
-            "4. Stretched or twisted / Sprain", "5. Cut / Incision / Amputation", "6. Electric Shock",
-            "7. Foreign Body", "8. Crush", "9. Heat Stroke", "10. Others (Specify)"
-          ], _selectedNatureInjury, (val) => setState(() => _selectedNatureInjury = val)),
-          if (_selectedNatureInjury?.contains("10. Others") ?? false) ...[
-            const SizedBox(height: 8),
-            TextFormField(onChanged: (val) => _otherNatureInjury = val, decoration: const InputDecoration(labelText: "Specify Nature Parameters")),
-          ],
-
+          _buildDropdownField("Nature of Injury *", _selectedNatureInjury, [
+            "1. Fracture", "2. Bruise / laceration", "3. Burn / Scald", "4. Sprain", "5. Cut / Amputation", "6. Electric Shock", "7. Foreign Body", "8. Crush", "9. Heat Stroke", "10. Others"
+          ], (val) => setState(() => _selectedNatureInjury = val)),
           const SizedBox(height: 16),
-          _buildDropdownField("Type of Incident *", [
-            "1. Striking against", "2. Struck by (falling , sliding or moving / flying object)",
-            "3. Struck in / caught in between/ compressed by", "4. Contact with (electricity / temp / chemical/radiation etc.)",
-            "5. Fall/slip/trip on same level or to lower level", "6. Lifting/pulling/pushing",
-            "7. Explosion/burns", "8. Others (Specify)"
-          ], _selectedTypeIncident, (val) => setState(() => _selectedTypeIncident = val)),
-          if (_selectedTypeIncident?.contains("8. Others") ?? false) ...[
-            const SizedBox(height: 8),
-            TextFormField(onChanged: (val) => _otherTypeIncident = val, decoration: const InputDecoration(labelText: "Specify Incident Variant Type")),
-          ],
+          _buildDropdownField("Type of Incident *", _selectedTypeIncident, [
+            "1. Striking against", "2. Struck by", "3. Caught in between", "4. Contact with", "5. Fall/slip/trip", "6. Lifting/pulling", "7. Explosion/burns", "8. Others"
+          ], (val) => setState(() => _selectedTypeIncident = val)),
         ],
       ),
     );
   }
 
-  // --- TAB 5: WIZARD STEP 3 - CORRECTIVE ACTIONS ---
   Widget _buildCorrectiveActionsTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -408,19 +352,14 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _buildSectionHeader("KNOWLEDGE MANAGEMENT & LESSONS LEARNED"),
-          TextFormField(controller: _learningPointCtrl, maxLines: 3, decoration: const InputDecoration(labelText: "Learning Point", hintText: "Strategic systemic engineering take-away observations")),
+          TextFormField(controller: _learningPointCtrl, maxLines: 3, decoration: const InputDecoration(labelText: "Learning Point")),
           const SizedBox(height: 24),
           _buildSectionHeader("CORRECTIVE / PREVENTIVE MEASURES MATRIX TRACKING"),
           Table(
             border: TableBorder.all(color: Colors.grey.shade400),
-            columnWidths: const {
-              0: FlexColumnWidth(3),
-              1: FlexColumnWidth(2),
-              2: FlexColumnWidth(2),
-            },
             children: [
               TableRow(
-                backgroundColor: Colors.grey[200],
+                decoration: BoxDecoration(color: Colors.grey[200]),
                 children: const [
                   Padding(padding: EdgeInsets.all(8), child: Text("Corrective Measure Plan", style: TextStyle(fontWeight: FontWeight.bold))),
                   Padding(padding: EdgeInsets.all(8), child: Text("Actionee (Resp)", style: TextStyle(fontWeight: FontWeight.bold))),
@@ -441,7 +380,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
     );
   }
 
-  // --- TAB 6: WIZARD STEP 4 - APPROVAL SIGN-OFFS ---
   Widget _buildApprovalsTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -461,7 +399,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
                 children: [
                   const Text("REGULATORY COMPLIANCE SYSTEM REQUIREMENT EVALUATION", style: TextStyle(fontWeight: FontWeight.bold)),
                   SwitchListTile(
-                    title: const Text("Any revision of existing documents (TRA/ Procedures) based on this incident outcome required?"),
+                    title: const Text("Any revision of existing documents required?"),
                     value: _revisionRequired,
                     onChanged: (val) => setState(() => _revisionRequired = val),
                     activeColor: const Color(0xFFC62828),
@@ -475,7 +413,6 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
     );
   }
 
-  // --- TAB 7: WIZARD STEP 5 - MEDIA UPLOADS ---
   Widget _buildUploadMediaTab() {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
@@ -493,7 +430,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
           _buildSectionHeader("DOCUMENT MANAGEMENT INFRASTRUCTURE CENTER"),
           ListTile(
             leading: const Icon(Icons.attach_file, color: Colors.green),
-            title: const Text("General Field Attachments (Statements, Drawings, Photos)"),
+            title: const Text("General Field Attachments"),
             subtitle: Text(_attachmentName),
             trailing: ElevatedButton(onPressed: () => _pickFile('attach'), child: const Text("Upload")),
           ),
@@ -503,25 +440,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
             subtitle: Text(_witnessStatementName),
             trailing: ElevatedButton(onPressed: () => _pickFile('witness'), child: const Text("Upload")),
           ),
-          const SizedBox(height: 20),
-          const Text("Attach photos if any", style: TextStyle(fontWeight: FontWeight.bold, fontStyle: FontStyle.italic)),
-          Container(
-            height: 100,
-            width: double.infinity,
-            margin: const EdgeInsets.symmetric(vertical: 8),
-            decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300), color: Colors.grey[100]),
-            child: const Center(child: Text("Interactive Photo File Previews Live Display Zone")),
-          )
         ],
       ),
     );
   }
 
-  // --- UTILITY COMPONENT CREATORS ---
   Widget _buildSectionHeader(String title) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 12),
-      child: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFFC62828), letterSpacing: 0.5)),
+      child: Text(title, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: Color(0xFFC62828))),
     );
   }
 
@@ -541,32 +468,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> with Single
       children: [
         Text(label, style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
         Container(
-          margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 0),
+          margin: const EdgeInsets.symmetric(vertical: 6),
           color: Colors.grey[200],
           child: Signature(controller: controller, height: 100, backgroundColor: Colors.white),
         ),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            TextButton(onPressed: () => controller.clear(), child: const Text("Clear Pad", style: TextStyle(color: Colors.red))),
-          ],
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton(onPressed: () => controller.clear(), child: const Text("Clear Pad", style: TextStyle(color: Colors.red))),
         )
       ],
-    );
-  }
-
-  Widget _buildDocumentControlFooter() {
-    return Container(
-      decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.grey.shade300))),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.between,
-        children: const [
-          Text("Ref.: TMAK-HSE-F 019", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87)),
-          Text("Rev. No: 03", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87)),
-          Text("Date: 21.08.2014", style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold, color: Colors.black87)),
-        ],
-      ),
     );
   }
 }
